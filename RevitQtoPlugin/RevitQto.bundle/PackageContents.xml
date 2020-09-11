@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ApplicationPackage>
+  <Components Description="Export Revit Qto Info">
+    <RuntimeRequirements OS="Win64"
+                         Platform="Revit"
+                         SeriesMin="R2019"
+                         SeriesMax="R2020" />
+    <ComponentEntry AppName="RevitQtoApp"
+                    Version="1.0.0"
+                    ModuleName="./Contents/RevitQto.addin"
+                    AppDescription="Export Revit Qto Info"
+                    LoadOnCommandInvocation="False"
+                    LoadOnRevitStartup="True" />
+  </Components>
+</ApplicationPackage>

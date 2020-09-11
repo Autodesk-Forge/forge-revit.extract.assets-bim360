@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="DBApplication">
+    <Name>ExportFireRatingToExcel</Name>
+    <Assembly>.\RevitQto.dll</Assembly>
+    <AddInId>E167F9BC-336C-4242-B5ED-38653DDB33CF</AddInId>
+    <FullClassName>RevitQto.ExportQtoInfo</FullClassName>
+    <Description>"Export Revit Qto Info."</Description>
+    <VendorId>Autodesk</VendorId>
+    <VendorDescription>Autodesk</VendorDescription>
+  </AddIn>
+</RevitAddIns>
