@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>Extract budgets to BIM360 Cost</title>
+  <title>Extract Revit Assets to BIM360</title>
   <meta charset="utf-8" />
   <!-- Common packages: jQuery, Bootstrap, jsTree -->
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -46,7 +46,7 @@
       </ul>
 
 
-      <ul class="nav navbar-nav right col-lg-2">
+      <ul class="nav navbar-nav right col-lg-3">
         <li>
             <div style="float: right; margin-top: 15px;">
                 <span style="padding-right: 5px;" data-toggle="modal" data-target="#provisionAccountModal" title="Enable my BIM 360 Account"><span
@@ -56,7 +56,7 @@
       </ul>
 
 
-      <ul class="nav navbar-nav right col-lg-2">
+      <ul class="nav navbar-nav right col-lg-3">
         <li>
               <div style="float: right; margin-top: 15px; cursor: pointer;">
                 <span style="padding-right: 5px;" data-toggle="modal" data-target="#defineActivityModal" title="Configura AppBundle & Activity">
@@ -67,16 +67,6 @@
         </li>
       </ul>
 
-      <ul class="nav navbar-nav right col-lg-2">
-        <li>
-              <div style="float: right; margin-top: 15px; cursor: pointer;">
-                <span style="padding-right: 5px;" data-toggle="modal" data-target="#initPriceBookModal" title="Price Book Initialization">
-                    <span class="glyphicon glyphicon-cog glyphiconTop mlink"></span> Price Book
-                </span>
-            </div>
-
-        </li>
-      </ul>
       <ul class="nav navbar-nav right col-lg-2">
         <div style="padding-top: 10px; text-align: right;">
           <li>
@@ -130,53 +120,33 @@
 
           <div class="row">
 
-            <div style="padding-top: 10px; text-align: center; border-bottom: 2px outset ;">
+            <div style="padding-top: 10px; text-align: center; border-bottom: 1px outset ;">
               <div class="btn-group btn-lg">
-                <button class="btn btn-primary" id="extractQuantityInfo">
-                  <span class="glyphicon glyphicon-export"></span>&nbsp Extract quantity from the model
+                <button class="btn btn-primary" id="extractAssetsInfo">
+                  <span class="glyphicon glyphicon-export"></span>&nbsp Extract Assets from the model
                 </button>
               </div>
-
-              <div class="clsInProgress" hidden>
-                <div style="text-align: center;">
-                  <img src="res/Bars-1s-200px.svg" width="100" height="100">
-                </div>
-              </div>
-
-
-            <div class="clsResult">
-                <div class="withBigBoard">
-                    <canvas id="budgetStatisticChart" height="150"></canvas>
-                </div>
-            </div>
           </div>
         </div>
         <br>
 
         <div class="row ">
-
               <div style="padding-top: 10px; text-align: center;">
-
-                <h5>Price Book (US$)</h5>
+                <h3>Asset Info List</h3>
                 <div class="clsInProgress" hidden>
                   <div style="text-align: center;">
                     <img src="res/Bars-1s-200px.svg" width="100" height="100">
                   </div>
                 </div>
                 <div class="clsResult">
-                  <table id="priceBookTable" class="display">
+                  <table id="assetInfoTable" class="display">
                   </table>
                 </div>
 
                 <div class="btn-group btn-lg">
-
                   <div style="padding-top: 10px;">
-  
                     <button class="btn btn-primary" id="updateToBIM360Btn">
-                      <span class="glyphicon glyphicon-arrow-right"></span>&nbsp Update to BIM360
-                    </button>
-                    <button class="btn btn-primary" id="unitPriceFromBIM360Btn">
-                      <span class="glyphicon glyphicon-arrow-left"></span>&nbsp Get Unit Price from BIM360
+                      <span class="glyphicon glyphicon-arrow-right"></span>&nbsp Create to BIM360
                     </button>
                   </div>
                 </div>
@@ -184,14 +154,9 @@
                   <div style="text-align: center;">
                     <img src="res/Bars-1s-200px.svg" width="100" height="100">
                   </div>
-                </div>
-
-                
+                </div>            
             </div>
-
         </div>
-
-
       </div>
     </div>
   </div>
@@ -283,72 +248,6 @@
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
             <button type="button" class="btn btn-primary" id="provisionAccountSave">Done</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Price book initialization  -->
-    <div class="modal fade" id="initPriceBookModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Cancel">
-              <span aria-hidden="true">&times;</span>
-            </button>
-            <h4 class="modal-title">Price Book Setting</h4>
-          </div>
-          <div class="modal-body">
-            <div class="alert alert-warning"><center>Provide "Length of budget code" according to your set in "Budget Code Template" and click the "Reset" button to reset the Price Book database to the default as follow</center></div>
-            <div class="row">
-              <div class="col-md-6"><h5>Length of budget code</h5> </div> 
-              <div class="col-md-6">
-                <div><input type="number" min="0" id="budgetCodeLength" value="4"></div>
-              </div>
-            </div>
-            <table class="table table-condensed">
-              <caption>Sample Price Book</caption>
-              <thead>
-                <tr>
-                  <th>Type</th>
-                  <th>Price($)</th>
-                  <th>Unit</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Concrete</td>
-                  <td>146.00</td>
-                  <td>m3</td>
-                </tr>
-                <tr>
-                  <td>Door</td>
-                  <td>1988.00</td>
-                  <td>nr</td>
-                </tr>
-                <tr>
-                  <td>Floor</td>
-                  <td>80.00</td>
-                  <td>m2</td>
-                </tr>
-                  <tr>
-                    <td>Window</td>
-                    <td>1224.00</td>
-                    <td>nr</td>
-                  </tr>
-                </tbody>
-            </table>
-
-          </div>
-          <div class="modal-footer">
-            <div class="resetingPriceBook" hidden>
-              <div style="text-align: center;">
-                <img src="res/Bars-1s-200px.svg" width="100" height="100">
-              </div>
-            </div>
-
-            <button type="button" class="btn btn-primary" id="resetPriceBook">Reset</button>
-            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
           </div>
         </div>
       </div>

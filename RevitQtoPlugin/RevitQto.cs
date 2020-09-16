@@ -58,22 +58,24 @@ namespace RevitQto
 
         public void HandleDesignAutomationReadyEvent(object sender, DesignAutomationReadyEventArgs e)
         {
-            e.Succeeded = CountElementsInModel(e.DesignAutomationData.RevitApp, e.DesignAutomationData.FilePath, e.DesignAutomationData.RevitDoc);
+            e.Succeeded = ExportAssetsInModel(e.DesignAutomationData.RevitApp, e.DesignAutomationData.FilePath, e.DesignAutomationData.RevitDoc);
+        }
 
-            //e.Succeeded = ExportRevitQtoInfo(e.DesignAutomationData);
+        internal class AssetCollection
+        {
+            public string Workitem { get; set; } = "";
+            public List<AssetInfo> AssetList { get; set; } = new List<AssetInfo>();
         }
 
 
-        /// <summary>
-        /// CountItResults is used to save the count result into Json file
-        /// </summary>
-        internal class CountItResults
+        internal class AssetInfo
         {
-            public double Concrete { get; set; } = 0;
-            public double Floor { get; set; } = 0;
-            public int Window { get; set; } = 0;
-            public int Door { get; set; } = 0;
-            public string workitem { get; set; } = "";
+            public string Id { get; set; } = "";
+            public string CategoryId { get; set; } = "";
+            public string StatusId { get; set; } = "";
+            public string Manufacturer { get; set; } = "";
+            public string Model { get; set; } = "";
+
         }
 
         /// <summary>
@@ -139,66 +141,30 @@ namespace RevitQto
         /// <param name="revitDoc"></param>
         /// <param name="countItParams"></param>
         /// <param name="results"></param>
-        internal static void CountElements(Document revitDoc, CountItParams countItParams, ref CountItResults results)
+        internal static void CountElements(Document revitDoc, CountItParams countItParams, ref AssetCollection assets)
         {
-
-            if (countItParams.Concrete)
-            {
-                IList<Element> elements = new FilteredElementCollector(revitDoc).WhereElementIsNotElementType().ToElements();
-                foreach( Element item in elements)
-                {
-                    Parameter familyType = item.get_Parameter(BuiltInParameter.ELEM_FAMILY_AND_TYPE_PARAM);
-                    if (familyType == null || familyType.StorageType != StorageType.ElementId)
-                        continue;
-
-                    Console.WriteLine("Get Family type");
-
-                    Element type = revitDoc.GetElement(familyType.AsElementId());
-                    if (type == null)
-                        continue;
-
-                    Parameter materialParam = type.get_Parameter(BuiltInParameter.STRUCTURAL_MATERIAL_PARAM);
-                    if (materialParam == null || materialParam.StorageType != StorageType.ElementId)
-                        continue;
-
-                    Console.WriteLine("Get Structure Material");
-
-
-                    Material material = revitDoc.GetElement(materialParam.AsElementId()) as Material;
-                    if (material == null)
-                        continue;
-
-                    Console.WriteLine("Get Material");
-
-                    if (material.MaterialCategory == "Concrete")
-                    {
-                        Console.WriteLine("Concrete volumn is " + item.Name + " id is: " + item.Id.ToString());
-
-                        double volumn = item.get_Parameter(BuiltInParameter.HOST_VOLUME_COMPUTED).AsDouble();
-                        Console.WriteLine(volumn.ToString());
-                        results.Concrete += volumn;
-                    }
-                }
-
-
-
-            }
-
             if (countItParams.floors)
             {
                 FilteredElementCollector elemCollector = new FilteredElementCollector(revitDoc);
                 elemCollector.OfClass(typeof(Floor));
                 IList<Element> elements = elemCollector.ToElements();
+                int index = 1;
                 foreach(Element element in elements)
                 {
                     Floor floor = element as Floor;
                     if (floor == null)
                         continue;
 
-                    Console.WriteLine("Get Structure Material: " + floor.Name);
+                    Console.WriteLine("Get floor name: " + floor.Name);
 
-                    double area = floor.get_Parameter(BuiltInParameter.HOST_AREA_COMPUTED).AsDouble();
-                    results.Floor += area;
+                    AssetInfo asset = new AssetInfo();
+                    asset.Id = @"Floor-" + index;
+                    asset.CategoryId = floor.Category.Name;
+                    asset.StatusId = "Specified";
+                    asset.Manufacturer = "Manufacturer US";
+                    asset.Model = "Test sample";
+                    assets.AssetList.Add(asset);
+                    index++;
                 }
             }
 
@@ -209,8 +175,19 @@ namespace RevitQto
                                                    .OfCategory(BuiltInCategory.OST_Doors)
                                                    .ToElements();
 
-                int count = collection.Count;
-                results.Door += count;
+                int index = 1;
+                foreach( var element in collection)
+                {
+                    AssetInfo asset = new AssetInfo();
+                    asset.Id = @"Door-" + index;
+                    asset.CategoryId = element.Category.Name;
+                    asset.StatusId = "Specified";
+                    asset.Manufacturer = "Manufacturer Asia";
+                    asset.Model = "Test sample";
+                    assets.AssetList.Add(asset);
+
+                    index++;
+                }
             }
 
             if (countItParams.windows)
@@ -220,15 +197,24 @@ namespace RevitQto
                                                    .OfCategory(BuiltInCategory.OST_Windows)
                                                    .ToElements();
 
-                int count = collection.Count;
-                results.Window += count;
+                int index = 1;
+                foreach (var element in collection)
+                {
+                    AssetInfo asset = new AssetInfo();
+                    asset.Id = @"Window-" + index;
+                    asset.CategoryId = element.Category.Name;
+                    asset.StatusId = "Specified";
+                    asset.Manufacturer = "Manufacturer EMEA";
+                    asset.Model = "Test sample";
+                    assets.AssetList.Add(asset);
+
+                    index++;
+                }
             }
             
-            results.Concrete /= 35.315;
-            results.Floor /= 10.764;
             String[] paths = Directory.GetCurrentDirectory().Split('\\');
-            results.workitem = paths[paths.Length - 1];
-            Console.WriteLine(results.workitem);
+            assets.Workitem = paths[paths.Length - 1];
+            Console.WriteLine(assets.Workitem);
         }
 
         /// <summary>
@@ -238,7 +224,7 @@ namespace RevitQto
         /// <param name="inputModelPath"></param>
         /// <param name="doc"></param>
         /// <returns></returns>
-        public static bool CountElementsInModel(Application rvtApp, string inputModelPath, Document doc)
+        public static bool ExportAssetsInModel(Application rvtApp, string inputModelPath, Document doc)
         {
             if (rvtApp == null)
                 return false;
@@ -253,17 +239,17 @@ namespace RevitQto
 
             // For CountIt workItem: If RvtParameters is null, count all types
             CountItParams countItParams = CountItParams.Parse("params.json");
-            CountItResults results = new CountItResults();
+            AssetCollection assets = new AssetCollection();
 
             List<Document> allDocs = GetHostAndLinkDocuments(doc);
             foreach (Document curDoc in allDocs)
             {
-                CountElements(curDoc, countItParams, ref results);
+                CountElements(curDoc, countItParams, ref assets);
             }
 
             using (StreamWriter sw = File.CreateText("result.json"))
             {
-                sw.WriteLine(JsonConvert.SerializeObject(results));
+                sw.WriteLine(JsonConvert.SerializeObject(assets));
                 sw.Close();
             }
 

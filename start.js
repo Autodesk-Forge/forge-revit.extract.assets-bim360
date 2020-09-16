@@ -53,7 +53,6 @@ app.use('/api/forge', require('./routes/user'));
 app.use('/api/forge', require('./routes/da4revit'));
 app.use('/api/forge', require('./routes/daconfigure'));
 app.use('/api/forge', require('./routes/bim360cost'));
-app.use('/api/forge', require('./routes/pricebook'));
 
 app.use((err, req, res, next) => {
     console.error(err);

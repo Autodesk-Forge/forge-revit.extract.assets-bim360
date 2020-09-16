@@ -24,9 +24,6 @@ module.exports = {
         client_secret: process.env.FORGE_CLIENT_SECRET,
         callback_url: process.env.FORGE_CALLBACK_URL
     },
-    database:{
-        url : process.env.OAUTH_DATABASE
-    },
     scopes: {
         // Required scopes for the server-side application
         internal: ['code:all', 'bucket:create', 'bucket:read', 'data:read', 'data:create', 'data:write'],
@@ -51,8 +48,9 @@ module.exports = {
     },
     bim360Cost:{
         URL:{
-            IMPORT_BUDGETS_URL: "https://developer.api.autodesk.com/cost/v1/containers/{0}/budgets:import",
-            BUDGETS_RUL: "https://developer.api.autodesk.com/cost/v1/containers/{0}/budgets" 
+            CREATE_ASSERTS_URL: "https://developer.api.autodesk.com/bim360/assets/v1/projects/{0}/assets",
+            CATEGORIES_URL: "https://developer.api.autodesk.com/bim360/assets/v1/projects/{0}/categories",
+            STATUS_SETS_URL: "https://developer.api.autodesk.com/bim360/assets/v1/projects/{0}/asset-statuses"
         }
     },
     designAutomation:{

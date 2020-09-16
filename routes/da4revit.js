@@ -48,7 +48,7 @@ router.use(async (req, res, next) => {
 ///////////////////////////////////////////////////////////////////////
 /// Export Qto info to Json file from Revit
 ///////////////////////////////////////////////////////////////////////
-router.get('/da4revit/revit/:version_storage/qto', async (req, res, next) => {
+router.get('/da4revit/revit/:version_storage/assets', async (req, res, next) => {
     const inputJson = req.query;
     const inputRvtUrl = (req.params.version_storage);
     if (inputJson === '' || inputRvtUrl === '') {
@@ -114,7 +114,7 @@ router.get('/da4revit/revit/:version_storage/qto', async (req, res, next) => {
 ///////////////////////////////////////////////////////////////////////
 router.put('/da4revit/file', jsonParser, async(req, res, next) =>{
     const workitem = workitemList.find( (item) => {
-        return item.workitemId === req.body.workitem;
+        return item.workitemId === req.body.Workitem;
     } )
     if( workitem === undefined ){
         console.log('The workitem: ' + req.body.id+ ' to callback is not in the item list');
@@ -124,7 +124,7 @@ router.put('/da4revit/file', jsonParser, async(req, res, next) =>{
         }));
     }
     const workitemStatus = {
-        'WorkitemId': req.body.workitem,
+        'WorkitemId': req.body.Workitem,
         'Status': "Completed",
         'ExtraInfo' : req.body
     };
