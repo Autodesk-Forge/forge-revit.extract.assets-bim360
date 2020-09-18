@@ -40,23 +40,24 @@ router.use(async (req, res, next) => {
 // /////////////////////////////////////////////////////////////////////
 router.post('/da4revit/bim360/assets', async (req, res, next) => {
     const project_id = req.body.cost_container_id;
-    const budgetList  = req.body.data; // input Url of Excel file
-    if ( budgetList === '' ) {
+    const assetList  = req.body.data; // input Url of Excel file
+    if ( assetList === '' ) {
         return (res.status(400).json({
             diagnostic: 'Missing input body info'
         }));
     }
-    const importBudgetsUrl =  bim360Cost.URL.CREATE_ASSERTS_URL.format(project_id);
-    let budgetsRes = null;
+    const importAssetsUrl =  bim360Cost.URL.CREATE_ASSERTS_URL.format(project_id);
+    let assetsRes = null;
 
-    await Promise.all(budgetList.map( async (item)=>{
+    await Promise.all(assetList.map( async (item,index)=>{
         try {
-            budgetsRes = await apiClientCallAsync( 'POST',  importBudgetsUrl, req.oauth_token.access_token, item);
+            await sleep(1000*index);
+            assetsRes = await apiClientCallAsync('POST', importAssetsUrl, req.oauth_token.access_token, item);
+            console.log(assetsRes);
         } catch (err) {
             console.error(err);
         }
     }) )
-
     return (res.status(200).json({resut:true}));
 });
 
@@ -111,5 +112,8 @@ router.get('/bim360/projects/:project_id/status-sets', async (req, res, next) =>
     return (res.status(200).json(categoriesRes.body.results));
 });
 
+function sleep(time) {
+    return new Promise((resolve) => setTimeout(resolve, time));
+}
 
 module.exports = router;

@@ -143,7 +143,44 @@ namespace RevitQto
         /// <param name="results"></param>
         internal static void CountElements(Document revitDoc, CountItParams countItParams, ref AssetCollection assets)
         {
-            if (countItParams.floors)
+            if(countItParams.Concrete)
+            {
+                FilteredElementCollector collector = new FilteredElementCollector(revitDoc);
+                ICollection<Element> collection = collector.OfClass(typeof(FamilyInstance))
+                                                   .OfCategory(BuiltInCategory.OST_DuctTerminal)
+                                                   .ToElements();
+
+                int index = 1;
+                foreach (var element in collection)
+                {
+                    AssetInfo asset = new AssetInfo();
+                    asset.Id = @"DuctTerminal-" + index;
+                    asset.CategoryId = element.Category.Name;
+                    asset.StatusId = "Specified";
+
+                    FamilyInstance instance = element as FamilyInstance;
+                    FamilySymbol symbol = instance.Symbol;
+                    if(symbol != null)
+                    {
+                        Parameter manufacturer = symbol.get_Parameter(BuiltInParameter.ALL_MODEL_MANUFACTURER);
+                        asset.Manufacturer = (manufacturer != null)? manufacturer.AsString() : "Not Specified";
+
+                        Parameter model = symbol.get_Parameter(BuiltInParameter.ALL_MODEL_MODEL);
+                        asset.Model = (model != null) ? model.AsString() : "Not Specified";
+
+                        asset.Manufacturer = "Manufacturer Asia";
+                        asset.Model = "Primary School Sample";
+                    }
+                    assets.AssetList.Add(asset);
+
+                    index++;
+                }
+
+
+
+            }
+
+            if (!countItParams.floors)
             {
                 FilteredElementCollector elemCollector = new FilteredElementCollector(revitDoc);
                 elemCollector.OfClass(typeof(Floor));
@@ -168,7 +205,7 @@ namespace RevitQto
                 }
             }
 
-            if (countItParams.doors)
+            if (!countItParams.doors)
             {
                 FilteredElementCollector collector = new FilteredElementCollector(revitDoc);
                 ICollection<Element> collection = collector.OfClass(typeof(FamilyInstance))
@@ -190,7 +227,7 @@ namespace RevitQto
                 }
             }
 
-            if (countItParams.windows)
+            if (!countItParams.windows)
             {
                 FilteredElementCollector collector = new FilteredElementCollector(revitDoc);
                 ICollection<Element> collection = collector.OfClass(typeof(FamilyInstance))

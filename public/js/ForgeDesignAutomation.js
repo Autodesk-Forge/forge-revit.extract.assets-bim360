@@ -17,11 +17,11 @@
 /////////////////////////////////////////////////////////////////////
 
 
-var budgetMgrInstance = null;
+var assetMgrInstance = null;
 
 
 ///////////////////////////////////////////////////////////////////////
-/// Class to handle budget table
+/// Class to handle assetMgrInstance table
 ///////////////////////////////////////////////////////////////////////
 class AssetTable {
 
@@ -55,13 +55,13 @@ class AssetTable {
   getAssetList() {
     var assetList = [];
     if (this.table !== null) {
-      this.table.data().toArray().forEach((budgetItem) => {
+      this.table.data().toArray().forEach((assetItem) => {
         const item = {
-          clientAssetId: budgetItem[0],
-          categoryId: budgetItem[1],
-          statusId: budgetItem[2],
-          manufacturer: budgetItem[3],
-          model: budgetItem[4]
+          clientAssetId: assetItem[0],
+          categoryId: assetItem[1],
+          statusId: assetItem[2],
+          manufacturer: assetItem[3],
+          model: assetItem[4]
         }
         assetList.push(item);
       })
@@ -71,9 +71,9 @@ class AssetTable {
 }
 
 ///////////////////////////////////////////////////////////////////////
-/// Class to manage the operation to budget
+/// Class to manage the operation to asset
 ///////////////////////////////////////////////////////////////////////
-class BudgetManager {
+class AssetManager {
   static SOCKET_TOPIC_WORKITEM = 'Workitem-Notification';
 
   constructor() {
@@ -97,7 +97,7 @@ class BudgetManager {
   // start listen to the server
   connectToServer() {
     if (this.socketio) {
-      this.socketio.on(BudgetManager.SOCKET_TOPIC_WORKITEM, this.handleSocketEvent.bind(this));
+      this.socketio.on(AssetManager.SOCKET_TOPIC_WORKITEM, this.handleSocketEvent.bind(this));
     }
   }
 
@@ -131,7 +131,7 @@ class BudgetManager {
 
 
   // initialize the information of current project, including selected node and and project
-  async initBudgetMgr(modelNode, projectId) {
+  async initAssetMgr(modelNode, projectId) {
     if (modelNode && projectId) {
       this.currentModelNode = modelNode;
       this.projectId = projectId;
@@ -160,7 +160,7 @@ class BudgetManager {
     }
   }
 
-  // update the current budgets information to BIM 360 Cost Management module
+  // update the current assets information to BIM 360 Asset Management module
   async updateToBIM360() {
     if (!this.assetTable)
       return false;
@@ -193,6 +193,9 @@ class BudgetManager {
           })
           if (category != null) {
             asset[key] = category["id"];
+          }else{
+            // TBD: create a category if not existing
+
           }
         }
         if (key === 'statusId') {
@@ -223,8 +226,8 @@ $(document).ready(function () {
   $('#extractAssetsInfo').click(extractAssetInfoHandler);
   $('#updateToBIM360Btn').click(updateToBIM360Handler);
  
-  budgetMgrInstance = new BudgetManager();
-  budgetMgrInstance.connectToServer();
+  assetMgrInstance = new AssetManager();
+  assetMgrInstance.connectToServer();
 });
 
 ///////////////////////////////////////////////////////////////////////
@@ -264,8 +267,8 @@ async function extractAssetInfoHandler() {
     $('#updateToBIM360Btn')[0].disabled = true;
 
 
-    await budgetMgrInstance.initBudgetMgr( sourceNode.original, projectId );
-    let result = await budgetMgrInstance.extractAssetsInfo( ()=>{
+    await assetMgrInstance.initAssetMgr( sourceNode.original, projectId );
+    let result = await assetMgrInstance.extractAssetsInfo( ()=>{
       $('.clsInProgress').hide();
       $('.clsResult').show();
       $('#updateToBIM360Btn')[0].disabled = false;
@@ -285,11 +288,11 @@ async function updateToBIM360Handler() {
   $('.clsUpdatingBIM360').show();
   $('#updateToBIM360Btn')[0].disabled = true;
 
-  if ( budgetMgrInstance ==null ) {
-    alert('budget table is not initialized.');
+  if ( assetMgrInstance ==null ) {
+    alert('asset table is not initialized.');
     return;
   }
-  const result = await budgetMgrInstance.updateToBIM360();
+  const result = await assetMgrInstance.updateToBIM360();
   if( result ){
     alert('Assets are imported to BIM360 Asset Module.')
   }else{
