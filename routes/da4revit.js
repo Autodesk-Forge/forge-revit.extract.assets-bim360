@@ -72,6 +72,7 @@ router.get('/da4revit/revit/:version_storage/assets', async (req, res, next) => 
         activityId: `${Utils.NickName}.${Utils.ActivityName}+${Utils.Alias}`,
         arguments: {
             inputFile: inputFileArgument,
+            inputJson: {url: "data:application/json,"+ JSON.stringify(inputJson)},
             outputJson: outputJsonArgument,
             onComplete: {
                 verb: 'post',

@@ -13,8 +13,8 @@
     <ProjectGuid>{9F4D6AA1-04BE-4FB2-8459-4DAC1719152D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RevitQto</RootNamespace>
-    <AssemblyName>RevitQto</AssemblyName>
+    <RootNamespace>ExtractAssets</RootNamespace>
+    <AssemblyName>ExtractAssets</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
@@ -91,7 +91,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="RevitQto.cs" />
+    <Compile Include="AssetsInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -112,10 +112,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="RevitQto.bundle\Contents\RevitQto.addin" />
+    <Content Include="ExtractAssets.bundle\Contents\ExtractAssets.addin" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="RevitQto.bundle\PackageContents.xml" />
+    <Content Include="ExtractAssets.bundle\PackageContents.xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -123,11 +123,11 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
-xcopy /Y /F "$(ProjectDir)RevitQto.addin" "$(AppData)\Autodesk\REVIT\Addins\2019"
-xcopy /Y /F "$(ProjectDir)bin\Debug\RevitQto.dll" "$(AppData)\Autodesk\REVIT\Addins\2019”
-xcopy /Y /F "$(TargetDir)*.dll" "$(ProjectDir)RevitQto.bundle\Contents\"
-del /F "$(ProjectDir)..\public\bundles\RevitQto.zip"
-"C:\Program Files\7-Zip\7z.exe" a -tzip "$(ProjectDir)../public/bundles/RevitQto.zip" "$(ProjectDir)RevitQto.bundle\" -xr0!*.pdb</PostBuildEvent>
+xcopy /Y /F "$(ProjectDir)ExtractAssets.addin" "$(AppData)\Autodesk\REVIT\Addins\2019"
+xcopy /Y /F "$(ProjectDir)bin\Debug\ExtractAssets.dll" "$(AppData)\Autodesk\REVIT\Addins\2019”
+xcopy /Y /F "$(TargetDir)*.dll" "$(ProjectDir)ExtractAssets.bundle\Contents\"
+del /F "$(ProjectDir)..\public\bundles\ExtractAssets.zip"
+"C:\Program Files\7-Zip\7z.exe" a -tzip "$(ProjectDir)../public/bundles/ExtractAssets.zip" "$(ProjectDir)ExtractAssets.bundle\" -xr0!*.pdb</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

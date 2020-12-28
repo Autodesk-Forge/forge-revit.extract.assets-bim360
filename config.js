@@ -48,9 +48,9 @@ module.exports = {
     },
     bim360Cost:{
         URL:{
-            CREATE_ASSERTS_URL: "https://developer.api.autodesk.com/bim360/assets/v1/projects/{0}/assets",
             CATEGORIES_URL: "https://developer.api.autodesk.com/bim360/assets/v1/projects/{0}/categories",
-            STATUS_SETS_URL: "https://developer.api.autodesk.com/bim360/assets/v1/projects/{0}/asset-statuses"
+            STATUS_SETS_URL: "https://developer.api.autodesk.com/bim360/assets/v1/projects/{0}/asset-statuses",
+            CREATE_ASSERTS_URL: "https://developer.api.autodesk.com/bim360/assets/v2/projects/{0}/assets:batch-create"
         }
     },
     designAutomation:{

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ApplicationPackage>
-  <Components Description="Export Revit Qto Info">
+  <Components Description="Extract Revit Assets Info">
     <RuntimeRequirements OS="Win64"
                          Platform="Revit"
                          SeriesMin="R2019"
-                         SeriesMax="R2020" />
-    <ComponentEntry AppName="RevitQtoApp"
+                         SeriesMax="R2021" />
+    <ComponentEntry AppName="ExtractAssetsApp"
                     Version="1.0.0"
-                    ModuleName="./Contents/RevitQto.addin"
-                    AppDescription="Export Revit Qto Info"
+                    ModuleName="./Contents/ExtractAssets.addin"
+                    AppDescription="Extract Revit Assets Info"
                     LoadOnCommandInvocation="False"
                     LoadOnRevitStartup="True" />
   </Components>

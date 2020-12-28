@@ -1,7 +1,7 @@
 {
-    "name": "forge-revit.extract.quantity-bim360.cost",
-    "description": "A sample showing how to extract quantity from Revit and create budget within BIM360",
-    "repository": "https://github.com/Autodesk-Forge/forge-revit.extract.quantity-bim360.cost",
+    "name": "forge-revit.extract.asset-bim360",
+    "description": "A sample showing how to extract assets from Revit and create assets within BIM360",
+    "repository": "https://github.com/Autodesk-Forge/forge-revit.extract.asset-bim360",
     "logo": "https://avatars0.githubusercontent.com/u/8017462?v=3&s=200",
     "keywords": [
         "autodesk",
@@ -23,10 +23,6 @@
         "FORGE_WEBHOOK_URL": {
             "description": "Base domain URL of your webhook",
             "value": "http://<<YOUR HEROKU APP NAME HERE>>.herokuapp.com"
-        },
-        "OAUTH_DATABASE": {
-            "description": "MongoDB connection string, e.g from MongoDB Atlas",
-            "value": "mongodb+srv://<username>:<password>@<clustername>-<njl8m>.mongodb.net"
         }
     },
     "website": "https://developer.autodesk.com/",

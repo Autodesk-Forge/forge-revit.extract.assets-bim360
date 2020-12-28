@@ -25,7 +25,6 @@
 #region Namespaces
 using System;
 using System.IO;
-using System.Linq;
 using System.Collections.Generic;
 
 using Newtonsoft.Json;
@@ -37,13 +36,12 @@ using DesignAutomationFramework;
 
 #endregion // Namespaces
 
-namespace RevitQto
+namespace DesignAutomationSample
 {
-
 
     [Autodesk.Revit.Attributes.Regeneration(Autodesk.Revit.Attributes.RegenerationOption.Manual)]
     [Autodesk.Revit.Attributes.Transaction(Autodesk.Revit.Attributes.TransactionMode.Manual)]
-    public class ExportQtoInfo : IExternalDBApplication
+    public class AssetsInfo : IExternalDBApplication
     {
         public ExternalDBApplicationResult OnStartup(ControlledApplication app)
         {
@@ -75,29 +73,26 @@ namespace RevitQto
             public string StatusId { get; set; } = "";
             public string Manufacturer { get; set; } = "";
             public string Model { get; set; } = "";
-
+            public string Description { get; set; } = "";
+            public string Barcode { get; set; } = "";
         }
 
         /// <summary>
-        /// CountItParams is used to parse the input Json parameters
+        /// AssetParams is used to parse the input Json parameters
         /// </summary>
-        internal class CountItParams
+        internal class AssetParams
         {
-            public bool walls { get; set; } = false;
-            public bool Concrete { get; set; } = true;
-            public bool floors { get; set; } = false;
-            public bool doors { get; set; } = false;
-            public bool windows { get; set; } = false;
+            public bool DuctTerminal { get; set; } = false;
 
-            static public CountItParams Parse(string jsonPath)
+            static public AssetParams Parse(string jsonPath)
             {
                 try
                 {
                     if (!File.Exists(jsonPath))
-                        return new CountItParams { walls = true, Concrete = true, floors = true, doors = true, windows = true };
+                        return new AssetParams { DuctTerminal = false };
 
                     string jsonContents = File.ReadAllText(jsonPath);
-                    return JsonConvert.DeserializeObject<CountItParams>(jsonContents);
+                    return JsonConvert.DeserializeObject<AssetParams>(jsonContents);
                 }
                 catch (System.Exception ex)
                 {
@@ -139,12 +134,13 @@ namespace RevitQto
         /// Count the element in each file
         /// </summary>
         /// <param name="revitDoc"></param>
-        /// <param name="countItParams"></param>
+        /// <param name="assetParams"></param>
         /// <param name="results"></param>
-        internal static void CountElements(Document revitDoc, CountItParams countItParams, ref AssetCollection assets)
+        internal static void ExtractAssets(Document revitDoc, AssetParams assetParams, ref AssetCollection assets)
         {
-            if(countItParams.Concrete)
+            if(assetParams.DuctTerminal)
             {
+                Console.WriteLine("Extract DuctTerminal...");
                 FilteredElementCollector collector = new FilteredElementCollector(revitDoc);
                 ICollection<Element> collection = collector.OfClass(typeof(FamilyInstance))
                                                    .OfCategory(BuiltInCategory.OST_DuctTerminal)
@@ -154,9 +150,13 @@ namespace RevitQto
                 foreach (var element in collection)
                 {
                     AssetInfo asset = new AssetInfo();
+                    // those values are just for showcase, in real case, please get these value from proper parameters
                     asset.Id = @"DuctTerminal-" + index;
                     asset.CategoryId = element.Category.Name;
                     asset.StatusId = "Specified";
+                    asset.Description = element.Name;
+                    asset.Barcode = element.UniqueId;
+
 
                     FamilyInstance instance = element as FamilyInstance;
                     FamilySymbol symbol = instance.Symbol;
@@ -167,82 +167,7 @@ namespace RevitQto
 
                         Parameter model = symbol.get_Parameter(BuiltInParameter.ALL_MODEL_MODEL);
                         asset.Model = (model != null) ? model.AsString() : "Not Specified";
-
-                        asset.Manufacturer = "Manufacturer Asia";
-                        asset.Model = "Primary School Sample";
                     }
-                    assets.AssetList.Add(asset);
-
-                    index++;
-                }
-
-
-
-            }
-
-            if (!countItParams.floors)
-            {
-                FilteredElementCollector elemCollector = new FilteredElementCollector(revitDoc);
-                elemCollector.OfClass(typeof(Floor));
-                IList<Element> elements = elemCollector.ToElements();
-                int index = 1;
-                foreach(Element element in elements)
-                {
-                    Floor floor = element as Floor;
-                    if (floor == null)
-                        continue;
-
-                    Console.WriteLine("Get floor name: " + floor.Name);
-
-                    AssetInfo asset = new AssetInfo();
-                    asset.Id = @"Floor-" + index;
-                    asset.CategoryId = floor.Category.Name;
-                    asset.StatusId = "Specified";
-                    asset.Manufacturer = "Manufacturer US";
-                    asset.Model = "Test sample";
-                    assets.AssetList.Add(asset);
-                    index++;
-                }
-            }
-
-            if (!countItParams.doors)
-            {
-                FilteredElementCollector collector = new FilteredElementCollector(revitDoc);
-                ICollection<Element> collection = collector.OfClass(typeof(FamilyInstance))
-                                                   .OfCategory(BuiltInCategory.OST_Doors)
-                                                   .ToElements();
-
-                int index = 1;
-                foreach( var element in collection)
-                {
-                    AssetInfo asset = new AssetInfo();
-                    asset.Id = @"Door-" + index;
-                    asset.CategoryId = element.Category.Name;
-                    asset.StatusId = "Specified";
-                    asset.Manufacturer = "Manufacturer Asia";
-                    asset.Model = "Test sample";
-                    assets.AssetList.Add(asset);
-
-                    index++;
-                }
-            }
-
-            if (!countItParams.windows)
-            {
-                FilteredElementCollector collector = new FilteredElementCollector(revitDoc);
-                ICollection<Element> collection = collector.OfClass(typeof(FamilyInstance))
-                                                   .OfCategory(BuiltInCategory.OST_Windows)
-                                                   .ToElements();
-
-                int index = 1;
-                foreach (var element in collection)
-                {
-                    AssetInfo asset = new AssetInfo();
-                    asset.Id = @"Window-" + index;
-                    asset.CategoryId = element.Category.Name;
-                    asset.StatusId = "Specified";
-                    asset.Manufacturer = "Manufacturer EMEA";
-                    asset.Model = "Test sample";
                     assets.AssetList.Add(asset);
 
                     index++;
@@ -251,6 +176,7 @@ namespace RevitQto
             
             String[] paths = Directory.GetCurrentDirectory().Split('\\');
             assets.Workitem = paths[paths.Length - 1];
+            Console.WriteLine(assets.AssetList.ToString());
             Console.WriteLine(assets.Workitem);
         }
 
@@ -275,13 +201,14 @@ namespace RevitQto
             Console.WriteLine("Start to execute the job");
 
             // For CountIt workItem: If RvtParameters is null, count all types
-            CountItParams countItParams = CountItParams.Parse("params.json");
+            AssetParams assetParams = AssetParams.Parse("params.json");
             AssetCollection assets = new AssetCollection();
 
             List<Document> allDocs = GetHostAndLinkDocuments(doc);
             foreach (Document curDoc in allDocs)
             {
-                CountElements(curDoc, countItParams, ref assets);
+                Console.WriteLine(@"Start to handle Document" + curDoc.PathName);
+                ExtractAssets(curDoc, assetParams, ref assets);
             }
 
             using (StreamWriter sw = File.CreateText("result.json"))

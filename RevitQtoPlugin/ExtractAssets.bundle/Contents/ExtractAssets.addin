@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="DBApplication">
+    <Name>ExtractAssetsInfo</Name>
+    <Assembly>.\ExtractAssets.dll</Assembly>
+    <AddInId>B748BAE0-07C6-4E34-8ED9-35E18109F6A5</AddInId>
+    <FullClassName>DesignAutomationSample.AssetsInfo</FullClassName>
+    <Description>"Extract Revit Assets Info."</Description>
+    <VendorId>Autodesk</VendorId>
+    <VendorDescription>Autodesk</VendorDescription>
+  </AddIn>
+</RevitAddIns>

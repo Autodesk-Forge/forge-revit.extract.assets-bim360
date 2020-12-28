@@ -49,15 +49,17 @@ router.post('/da4revit/bim360/assets', async (req, res, next) => {
     const importAssetsUrl =  bim360Cost.URL.CREATE_ASSERTS_URL.format(project_id);
     let assetsRes = null;
 
-    await Promise.all(assetList.map( async (item,index)=>{
+    // batch create has maximun of 100 assets
+    while(assetList.length > 0)
+    {
+        let currentAsset = assetList.splice(0, 100);
         try {
-            await sleep(1000*index);
-            assetsRes = await apiClientCallAsync('POST', importAssetsUrl, req.oauth_token.access_token, item);
+            assetsRes = await apiClientCallAsync('POST', importAssetsUrl, req.oauth_token.access_token, currentAsset);
             console.log(assetsRes);
         } catch (err) {
             console.error(err);
         }
-    }) )
+    }
     return (res.status(200).json({resut:true}));
 });
 

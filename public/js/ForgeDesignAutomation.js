@@ -29,8 +29,8 @@ class AssetTable {
     { title: "Assert ID" },
     { title: "Category" },
     { title: "Status" },
-    { title: "Manufacturer" },
-    { title: "Model" }
+    { title: "Description" },
+    // { title: "Barcode" }
   ];
 
   constructor(tableId, dataSet = []) {
@@ -60,8 +60,8 @@ class AssetTable {
           clientAssetId: assetItem[0],
           categoryId: assetItem[1],
           statusId: assetItem[2],
-          manufacturer: assetItem[3],
-          model: assetItem[4]
+          description: assetItem[3],
+          barcode: assetItem[4]
         }
         assetList.push(item);
       })
@@ -80,7 +80,7 @@ class AssetManager {
     this.currentModelNode = null;
     this.projectId = null;
 
-    this.quantityInfo = null;
+    this.assetInfo = null;
     this.workingItem = null;
 
     this.drawTableCallback = null;
@@ -118,7 +118,7 @@ class AssetManager {
       const elementInfo = data.ExtraInfo;
 
       elementInfo.AssetList.forEach( assert => {
-        table_dataSet.push( [assert.Id, assert.CategoryId, assert.StatusId, assert.Manufacturer, assert.Model]);
+        table_dataSet.push( [assert.Id, assert.CategoryId, assert.StatusId, assert.Description, assert.Barcode]);
       })
 
       this.assetTable.refreshTable(table_dataSet);
@@ -139,22 +139,19 @@ class AssetManager {
   }
 
 
-  // extract quantity inforamtion based on the current revit project
+  // extract asset inforamtion based on the current revit project
   async extractAssetsInfo(drawTableCallback) {
     this.drawTableCallback = drawTableCallback;
     const inputJson = {
-      walls: true,
-      floors: true,
-      doors: true,
-      windows: true
+      DuctTerminal: true
     };
     try {
       const requestUrl = '/api/forge/da4revit/revit/' + encodeURIComponent(this.currentModelNode.storage) + '/assets';
-      this.quantityInfo = await apiClientAsync(requestUrl, inputJson);
-      this.workingItem = this.quantityInfo.workItemId;
+      this.assetInfo = await apiClientAsync(requestUrl, inputJson);
+      this.workingItem = this.assetInfo.workItemId;
       return true;
     } catch (err) {
-      this.quantityInfo = null;
+      this.assetInfo = null;
       this.workingItem = null;
       return false;
     }
@@ -264,6 +261,7 @@ async function extractAssetInfoHandler() {
     // Start to work.
     $('.clsInProgress').show();
     $('.clsResult').hide();
+    $('#extractAssetsInfo')[0].disabled = true;
     $('#updateToBIM360Btn')[0].disabled = true;
 
 
@@ -271,6 +269,7 @@ async function extractAssetInfoHandler() {
     let result = await assetMgrInstance.extractAssetsInfo( ()=>{
       $('.clsInProgress').hide();
       $('.clsResult').show();
+      $('#extractAssetsInfo')[0].disabled = false;
       $('#updateToBIM360Btn')[0].disabled = false;
     });
     if(!result){

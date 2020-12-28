@@ -63,7 +63,7 @@ class Utils {
 		if( config.designAutomation && config.designAutomation.activity_name ){
 			return (config.designAutomation.activity_name);
 		}else{
-			return ('RevitQtoActivity');
+			return ('ExtractAssetsActivity');
 		}
 	}
 
