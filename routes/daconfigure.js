@@ -166,7 +166,7 @@ router.post('/designautomation/appbundles', async( req, res, next) => {
             package: appBundleName,
             engine: engineName,
             id: appBundleName,
-            description: `Export Qto information from Revit`
+            description: `Export Asset information from Revit`
         };
         try {
             newAppVersion = await api.createAppBundle(appBundleSpec);
@@ -234,7 +234,7 @@ router.post('/designautomation/activities', async( req, res, next) => {
         const activitySpec = {
             Id : activityName,
             Appbundles : [ qualifiedAppBundleId ],
-            CommandLine : [ "$(engine.path)\\\\revitcoreconsole.exe /i $(args[inputFile].path) /al $(appbundles[" + appBundleName + "].path)" ],
+            CommandLine : [ "$(engine.path)\\\\revitcoreconsole.exe /i \"$(args[inputFile].path)\" /al \"$(appbundles[" + appBundleName + "].path)\"" ],
             Engine : engineName,
             Parameters :
             {
@@ -250,7 +250,7 @@ router.post('/designautomation/activities', async( req, res, next) => {
                 },
                 outputJson: {
                     verb: "put",
-                    description: "output qto file",
+                    description: "output asset file",
                     localName: "result.json"
                 }
             }
