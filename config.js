@@ -46,7 +46,7 @@ module.exports = {
 		},
 		requestTimeout: 25000
     },
-    bim360Cost:{
+    bim360Assets:{
         URL:{
             CATEGORIES_URL: "https://developer.api.autodesk.com/bim360/assets/v1/projects/{0}/categories",
             STATUS_SETS_URL: "https://developer.api.autodesk.com/bim360/assets/v1/projects/{0}/asset-statuses",

@@ -18,7 +18,7 @@
 'use strict';   
 
 const express = require('express');
-const { bim360Cost }= require('../config');
+const { bim360Assets }= require('../config');
 const { OAuth } = require('./common/oauthImp');
 const { apiClientCallAsync } = require('./common/apiclient');
 
@@ -39,14 +39,14 @@ router.use(async (req, res, next) => {
 // / Create assets to BIM360 
 // /////////////////////////////////////////////////////////////////////
 router.post('/da4revit/bim360/assets', async (req, res, next) => {
-    const project_id = req.body.cost_container_id;
+    const project_id = req.body.project_id;
     const assetList  = req.body.data; // input Url of Excel file
     if ( assetList === '' ) {
         return (res.status(400).json({
             diagnostic: 'Missing input body info'
         }));
     }
-    const importAssetsUrl =  bim360Cost.URL.CREATE_ASSERTS_URL.format(project_id);
+    const importAssetsUrl =  bim360Assets.URL.CREATE_ASSERTS_URL.format(project_id);
     let assetsRes = null;
 
     // batch create has maximun of 100 assets
@@ -58,6 +58,9 @@ router.post('/da4revit/bim360/assets', async (req, res, next) => {
             console.log(assetsRes);
         } catch (err) {
             console.error(err);
+            return (res.status(500).json({
+                diagnostic: 'Failed to import assets to BIM 360'
+            }));       
         }
     }
     return (res.status(200).json({resut:true}));
@@ -73,10 +76,10 @@ router.get('/bim360/projects/:project_id/categories', async (req, res, next) => 
     const project_id = req.params.project_id;
     if ( project_id === '' ) {
         return (res.status(400).json({
-            diagnostic: 'Missing input cost container id'
+            diagnostic: 'Missing input project id'
         }));
     }
-    const categoriesUrl =  bim360Cost.URL.CATEGORIES_URL.format(project_id);
+    const categoriesUrl =  bim360Assets.URL.CATEGORIES_URL.format(project_id);
     let categoriesRes = null;
     try {
         categoriesRes = await apiClientCallAsync( 'GET',  categoriesUrl, req.oauth_token.access_token);
@@ -89,6 +92,37 @@ router.get('/bim360/projects/:project_id/categories', async (req, res, next) => 
     return (res.status(200).json(categoriesRes.body.results));
 });
 
+// /////////////////////////////////////////////////////////////////////
+// / Create new category in BIM360 
+// /////////////////////////////////////////////////////////////////////
+router.post('/bim360/projects/:project_id/categories', async (req, res, next) => {
+
+    const project_id = req.params.project_id;
+    if ( project_id === '' ) {
+        return (res.status(400).json({
+            diagnostic: 'Missing input project id'
+        }));
+    }
+    const category  = req.body;
+    if ( category === null ) {
+        return (res.status(400).json({
+            diagnostic: 'Missing input category body info'
+        }));
+    }
+
+    const categoriesUrl =  bim360Assets.URL.CATEGORIES_URL.format(project_id);
+    let categoriesRes = null;
+    try {
+        categoriesRes = await apiClientCallAsync( 'POST',  categoriesUrl, req.oauth_token.access_token, category );
+    } catch (err) {
+        console.error(err);
+        return (res.status(500).json({
+			diagnostic: 'Failed to create asset categories info within BIM 360'
+        }));
+    }
+    return (res.status(200).json(categoriesRes.body));
+});
+
 
 // /////////////////////////////////////////////////////////////////////
 // / Get status sets in BIM360 
@@ -98,24 +132,55 @@ router.get('/bim360/projects/:project_id/status-sets', async (req, res, next) =>
     const project_id = req.params.project_id;
     if ( project_id === '' ) {
         return (res.status(400).json({
-            diagnostic: 'Missing input cost container id'
+            diagnostic: 'Missing input project id'
         }));
     }
-    const categoriesUrl =  bim360Cost.URL.STATUS_SETS_URL.format(project_id);
-    let categoriesRes = null;
+    const statusSetsUrl =  bim360Assets.URL.STATUS_SETS_URL.format(project_id);
+    let statusSetsRes = null;
     try {
-        categoriesRes = await apiClientCallAsync( 'GET',  categoriesUrl, req.oauth_token.access_token);
+        statusSetsRes = await apiClientCallAsync( 'GET',  statusSetsUrl, req.oauth_token.access_token);
     } catch (err) {
         console.error(err);
         return (res.status(500).json({
 			diagnostic: 'Failed to get asset status sets info from BIM 360'
         }));
     }
-    return (res.status(200).json(categoriesRes.body.results));
+    return (res.status(200).json(statusSetsRes.body.results));
 });
 
-function sleep(time) {
-    return new Promise((resolve) => setTimeout(resolve, time));
-}
+
+// /////////////////////////////////////////////////////////////////////
+// / Create new status set in BIM360 
+// /////////////////////////////////////////////////////////////////////
+router.post('/bim360/projects/:project_id/status-sets', async (req, res, next) => {
+
+    const project_id = req.params.project_id;
+    if ( project_id === '' ) {
+        return (res.status(400).json({
+            diagnostic: 'Missing input project id'
+        }));
+    }
+
+    const statusBody  = req.body;
+    if ( statusBody === null ) {
+        return (res.status(400).json({
+            diagnostic: 'Missing input status body info'
+        }));
+    }
+    
+
+    const statusSetsUrl =  bim360Assets.URL.STATUS_SETS_URL.format(project_id);
+    let statusSetsRes = null;
+    try {
+        statusSetsRes = await apiClientCallAsync( 'POST',  statusSetsUrl, req.oauth_token.access_token, statusBody);
+    } catch (err) {
+        console.error(err);
+        return (res.status(500).json({
+			diagnostic: 'Failed to get asset status sets info from BIM 360'
+        }));
+    }
+    return (res.status(200).json(statusSetsRes.body));
+});
+
 
 module.exports = router;

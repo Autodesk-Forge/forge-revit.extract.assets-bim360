@@ -162,27 +162,35 @@ class AssetManager {
     if (!this.assetTable)
       return false;
 
-    // get categores
+    // find categores
     let categories = null;
     try{
       const requestUrl = '/api/forge/bim360/projects/' + encodeURIComponent(this.projectId) + '/categories';
       categories = await apiClientAsync(requestUrl);
     }catch(ex){
-      console.error('Failed to get categories');    
+      console.error('Exception to get categories');   
+      return false; 
     }
 
-    // get status set
+    // find status set
     let statusSets = null;
     try{
       const requestUrl = '/api/forge/bim360/projects/' + encodeURIComponent(this.projectId) + '/status-sets';
       statusSets = await apiClientAsync(requestUrl);
     }catch(ex){
-      console.error('Failed to get status sets');    
+      console.error('Exception to get status sets');    
+      return false;
+    }
+
+    if( categories == null || statusSets == null ){
+      console.error('Failed to get assets categories or status sets');    
+      return false;
     }
 
     const assetList = this.assetTable.getAssetList();
-    // handle assetList.
-    assetList.forEach(asset => {
+    // replace statusId and categoryId in assetList with correct one
+    for(let index = 0; index < assetList.length; index++ ){
+      let asset = assetList[index];
       for (let key in asset) {
         if (key === 'categoryId') {
           let category = categories.find(item => {
@@ -190,21 +198,42 @@ class AssetManager {
           })
           if (category != null) {
             asset[key] = category["id"];
-          }else{
-            // TBD: create a category if not existing
-
+          } 
+          else { // create a category if not existing
+            try {
+              const requestUrl = '/api/forge/bim360/projects/' + encodeURIComponent(this.projectId) + '/categories';
+              const requestBody = {
+                parentId: categories[0].id,
+                name: asset[key]
+              };
+              const newCategory = await apiClientAsync(requestUrl, requestBody, "post");
+              asset[key] = newCategory["id"];
+              categories.push(newCategory);
+            }
+            catch (err) {
+              console.error('Failed to find and create category.');
+              return false;
+            }
           }
         }
         if (key === 'statusId') {
-          asset[key] = statusSets[0]['id'];
+          let status = statusSets.find(item => {
+            return (item["label"] === asset[key]);
+          })
+          if (status != null) {
+            asset[key] = status["id"];
+          } 
+          else { // get the 1st status if not existing
+            asset[key] = statusSets[0]['id'];
+          }
         }
-      }
-    })
+      } 
+    }
 
     try {
       const requestUrl = '/api/forge/da4revit/bim360/assets';
       const requestBody = {
-        cost_container_id: this.projectId,
+        project_id: this.projectId,
         data: assetList
       };
       const result = await apiClientAsync(requestUrl, requestBody, 'post');
@@ -248,7 +277,7 @@ async function extractAssetInfoHandler() {
         return;
     }
     const projectHref = $('#labelProjectHref').text();
-    const projectId = $('#labelCostContainer').text();
+    const projectId   = $('#labelProjectId').text();
     if (projectHref === '' || projectId === '') {
       alert('please select one Revit project!');
       return;

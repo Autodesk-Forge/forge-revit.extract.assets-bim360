@@ -153,6 +153,7 @@ namespace DesignAutomationSample
                     // those values are just for showcase, in real case, please get these value from proper parameters
                     asset.Id = @"DuctTerminal-" + index;
                     asset.CategoryId = element.Category.Name;
+                    // TBD: StatusId is fixed at this momentent
                     asset.StatusId = "Specified";
                     asset.Description = element.Name;
                     asset.Barcode = element.UniqueId;

@@ -137,7 +137,7 @@ async function getProjects(hubId, oauthClient, credentials, res) {
             project.links.self.href,
             project.attributes.name,
             projectType,
-            project.relationships.cost.data.id,
+            project.id.split("b.").join(""),
             true
         );
     }));
@@ -197,8 +197,8 @@ async function getVersions(projectId, itemId, oauthClient, credentials, res) {
 }
 
 // Format data for tree
-function createTreeNode(_id, _text, _type, _cost_container, _children, _storage = null) {
-    return { id: _id, text: _text, type: _type, cost_container: _cost_container, children: _children, storage: _storage };
+function createTreeNode(_id, _text, _type, _project_id, _children, _storage = null) {
+    return { id: _id, text: _text, type: _type, project_id: _project_id, children: _children, storage: _storage };
 }
 
 module.exports = {

@@ -126,7 +126,7 @@ function prepareUserHubsTree() {
           const currentNode = instanceTree.get_node(data.node.parents[parentNode]);
           if (currentNode.type === "bim360projects") {
             $('#labelProjectHref').text(currentNode.id);
-            $('#labelCostContainer').text(currentNode.original.cost_container);
+            $('#labelProjectId').text(currentNode.original.project_id);
             break;
           }
         }
