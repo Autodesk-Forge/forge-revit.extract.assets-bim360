@@ -25,16 +25,13 @@ The sample also provides the ability to import the generated assets directly int
 # Thumbnail
 ![thumbnail](/thumbnail.png)
 
-# Demonstration
-[![https://youtu.be/zJKvatl3zek](http://img.youtube.com/vi/zJKvatl3zek/0.jpg)](https://youtu.be/zJKvatl3zek "Generate Assets from Revit model directly, and export to BIM360 Assets module")
-
 
 # Live Demo
 [https://revit-assets-bim360.herokuapp.com/](https://revit-assets-bim360.herokuapp.com/)
 
 # Main Parts of The Work
 1. Create a Revit Plugin to be used within AppBundle of Design Automation for Revit. Please check [PlugIn](./RevitPlugin/) 
-2. Create your App, upload the AppBundle, define your Activity, you can simply use the `**Configure**` button in the Web Application to create the Appbundle & Activity. Or you can use Postman to do that according to [this tutorial](https://forge.autodesk.com/en/docs/design-automation/v3/tutorials/revit/) and [repo](https://github.com/Autodesk-Forge/forge-tutorial-postman)  
+2. Create your App, upload the AppBundle, define your Activity, you can simply use the **Configure** button in the Web Application to create the Appbundle & Activity. Or you can use Postman to do that according to [this tutorial](https://forge.autodesk.com/en/docs/design-automation/v3/tutorials/revit/) and [repo](https://github.com/Autodesk-Forge/forge-tutorial-postman)  
 3. Create the Web App to call the workitem.
 
 # Web App Setup
@@ -43,7 +40,7 @@ The sample also provides the ability to import the generated assets directly int
 
 1. **Forge Account**: Learn how to create a Forge Account, activate subscription and create an app at [this tutorial](http://learnforge.autodesk.io/#/account/). 
 2. **BIM 360 Account**: must be an Account Admin to add the app custom integration, or invited by an admin of a BIM 360 Account. [Learn about provisioning](https://forge.autodesk.com/blog/bim-360-docs-provisioning-forge-apps). 
-3. **BIM 360 Assets Management**: Create BIM 360 project, activate Assets Management module.
+3. **BIM 360 Assets Management**: Create BIM 360 project, [activate Assets Management module](http://help.autodesk.com/view/BIM360D/ENU/?guid=GUID-62233D06-249B-4D6E-BC05-5303642220A3).
 4. **Visual Code**: Visual Code (Windows or MacOS).
 5. **Revit 2020** & **Visual Studio 2017**: required to compile changes into the plugin
 6. **ngrok**: Routing tool, [download here](https://ngrok.com/)
