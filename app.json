@@ -1,7 +1,7 @@
 {
     "name": "forge-revit.extract.assets-bim360",
     "description": "A sample showing how to extract assets from Revit and create assets within BIM360",
-    "repository": "https://github.com/Autodesk-Forge/forge-revit.extract.assets-bim360",
+    "repository": "https://github.com/JohnOnSoftware/forge-revit.extract.assets-bim360",
     "logo": "https://avatars0.githubusercontent.com/u/8017462?v=3&s=200",
     "keywords": [
         "autodesk",

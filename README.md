@@ -18,6 +18,7 @@
 [![MIT](https://img.shields.io/badge/License-MIT-blue.svg)](http://opensource.org/licenses/MIT)
 
 # Description
+Generating construction assets directly from Revit model is one scenario which focus on assets preparation. For example, a MEP model, there might be thousands of devices, customer has the requirement to automatically generate all of these devices directly from the design model into BIM 360 Assets. 
 This sample demonstrates extracting assets information of Revit element directly from model under BIM 360 using design automation service. 
 The sample also provides the ability to import the generated assets directly into BIM 360 Assets Management module. 
 
