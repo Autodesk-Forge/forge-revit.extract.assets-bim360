@@ -30,7 +30,7 @@ The sample also provides the ability to import the generated assets directly int
 
 
 # Live Demo
-[https://revit-assets-bim360.herokuapp.com/](https://revit-assets-bim360.herokuapp.com/)
+[https://revit-da-assets-bim360.herokuapp.com](https://revit-da-assets-bim360.herokuapp.com)
 
 # Main Parts of The Work
 1. Create a Revit Plugin to be used within AppBundle of Design Automation for Revit. Please check [PlugIn](./RevitPlugin/) 
